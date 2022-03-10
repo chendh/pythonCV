@@ -3,7 +3,7 @@ import numpy as np
 
 cap = cv.VideoCapture(0)
 
-while(1):
+while 1:
     _, frame = cap.read()
 
     hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
@@ -20,6 +20,6 @@ while(1):
     cv.imshow('result', res)
 
     k = cv.waitKey() & 0xFF
-    if k==27:
+    if k == 27:
         break
 cv.destroyAllWindows()
