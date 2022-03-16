@@ -5,7 +5,8 @@ import numpy as np
 def my_first_filter(img):
     cv.imshow('original image', img)
     # 定義一個5*5的平均濾波器
-    kernel = np.ones((5, 5), np.float32) / 25
+    # kernel = np.ones((5, 5), np.float32) / 25
+    kernel = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])/9
     # 使用filter2d()來進行濾波
     result = cv.filter2D(img, -1, kernel)
     cv.imshow('Filtered_image', result)
