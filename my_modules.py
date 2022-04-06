@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 
 
-class CVFunction:
+class MyFunction:
     def open_file(self):
         filetypes = (
             ('jpg files', '*.jpg'),

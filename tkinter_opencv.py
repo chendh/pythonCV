@@ -24,7 +24,7 @@ class App:
         self.menubar.add_cascade(label="檔案", menu=self.file_menu)
 
         # 建立一個功能選單
-        self.myfunction = my_modules.CVFunction()
+        self.myfunction = my_modules.MyFunction()
         self.function_menu = tk.Menu(self.menubar, tearoff=0)
         self.function_menu.add_command(label='Canny Edge Detector', command=self.myfunction.canny_detector)
         self.function_menu.add_command(label='Hough Transform', command=self.myfunction.hough_transform)
