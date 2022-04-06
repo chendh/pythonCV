@@ -79,3 +79,31 @@ class CVFunction:
         cv.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdst_p)
 
         cv.waitKey()
+
+
+class MyVideoCapture:
+    def __init__(self, video_source=0):
+        # Open the video source
+        self.vid = cv.VideoCapture(video_source)
+        if not self.vid.isOpened():
+            raise ValueError("Unable to open video source", video_source)
+
+        # Get video source width and height
+        self.width = self.vid.get(cv.CAP_PROP_FRAME_WIDTH)
+        self.height = self.vid.get(cv.CAP_PROP_FRAME_HEIGHT)
+
+    def get_frame(self):
+        if self.vid.isOpened():
+            ret, frame = self.vid.read()
+            if ret:
+                # Return a boolean success flag and the current frame converted to BGR
+                return ret, cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            else:
+                return ret, None
+
+    # Release the video source when the object is destroyed
+    def __del__(self):
+        if self.vid.isOpened():
+            self.vid.release()
+
+    # Create a window and pass it to the Application object
