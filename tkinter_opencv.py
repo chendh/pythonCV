@@ -27,7 +27,7 @@ class App:
         # 建立一個功能選單
         self.operator_menu = tk.Menu(self.menubar, tearoff=0)
         self.operator_menu.add_command(label='Canny Edge Detector', command=self.canny_detector)
-        self.operator_menu.add_command(label='Hough Transofrm', command=self.hough_transform)
+        self.operator_menu.add_command(label='Hough Transform', command=self.hough_transform)
         self.menubar.add_cascade(label="功能", menu=self.operator_menu)
 
         # 顯示選單
@@ -86,13 +86,13 @@ class App:
         self.window.after(self.delay, self.update)
 
     def canny_detector(self):
-        max_lowThreshold = 100
+        max_threshold = 100
         window_name = 'Edge Map'
         title_trackbar = 'Min Threshold:'
         ratio = 3
         kernel_size = 3
 
-        def CannyThreshold(val):
+        def canny_value_change(val):
             low_threshold = val
             img_blur = cv.blur(src_gray, (3, 3))
             detected_edges = cv.Canny(img_blur, low_threshold, low_threshold * ratio, kernel_size)
@@ -103,8 +103,8 @@ class App:
         src = self.open_file()
         src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
         cv.namedWindow(window_name)
-        cv.createTrackbar(title_trackbar, window_name, 0, max_lowThreshold, CannyThreshold)
-        CannyThreshold(0)
+        cv.createTrackbar(title_trackbar, window_name, 0, max_threshold, canny_value_change)
+        canny_value_change(0)
         cv.waitKey()
 
     def hough_transform(self):
