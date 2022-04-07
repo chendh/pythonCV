@@ -100,12 +100,69 @@ def add_gaussian_noise(img, mean=0, sigma=0.1):
     cv.imshow('denoise', dst)
     # median_filter(img_gaussian)
 
+
 def unsharp_mask(img):
     cv.imshow('original image', img)
+    kernel_size = (5, 5)
+    amount = 1.5
+    img_blur = cv.GaussianBlur(img, kernel_size, 1.0)
+    cv.imshow('blurred image', img_blur)
+    cv.imshow('sharpen image', img - img_blur)
+
+    img_usm = cv.addWeighted(img, amount + 1.0, img_blur, -1.0 * amount, 0)
+    img_usm = np.clip(img_usm, 0, 255)
+    cv.imshow('unsharp image', img_usm)
+
+
+def bilateral_filter(img):
+    cv.imshow('original image', img)
+    img_bi = cv.bilateralFilter(img, 9, 5, 5)
+    cv.imshow('first bilateral image', img_bi)
+
+    img_bi2 = cv.bilateralFilter(img, 9, 50, 50)
+    cv.imshow('second bilateral image', img_bi2)
+
+    img_bi3 = cv.bilateralFilter(img, 9, 100, 100)
+    cv.imshow('third bilateral image', img_bi3)
+
+
+def resize(img):
+    cv.imshow('original', img)
+    rows, cols, ch = img.shape
+    img_res = cv.resize(img, None, fx=2, fy=2, interpolation=cv.INTER_CUBIC)
+    cv.imshow('resize image', img_res)
+
+
+def translate(img):
+    cv.imshow('original', img)
+    rows, cols, ch = img.shape
+    M = np.float32([[1, 0, 100],
+                    [0, 1, 50]])
+    img_tra = cv.warpAffine(img, M, (cols, rows))
+    cv.imshow('translate image', img_tra)
+
+
+def rotate(img):
+    cv.imshow('original', img)
+    rows, cols, ch = img.shape
+    M = cv.getRotationMatrix2D(((cols-1)/2.0, (rows-1)/2.0), -45, 1.5)
+    img_rot = cv.warpAffine(img, M, (cols, rows))
+    cv.imshow('rotate image', img_rot)
+
+
+def affine(img):
+    cv.imshow('original', img)
+    rows, cols, ch = img.shape
+    pts1 = np.float32([[50, 50], [200, 50], [50, 200]])
+    pts2 = np.float32([[10, 80], [200, 50], [100, 250]])
+    M = cv.getAffineTransform(pts1, pts2)
+    img_aff = cv.warpAffine(img, M, (cols, rows))
+    cv.imshow('affine image', img_aff)
 
 
 #     return gaussian_out , noise# 讀取影像
-img_ori = cv.imread('image/cameraman.png')
+img_ori = cv.imread('image/opencvlogo.png')
+# image filtering
 # my_first_filter(img_ori)
 # averaging_filter(img_ori)
 # gaussian_filter(img_ori)
@@ -113,5 +170,12 @@ img_ori = cv.imread('image/cameraman.png')
 # sobel_filter(img_ori)
 # laplacian_filter(img_ori)
 # add_gaussian_noise(img_ori)
-unsharp_mask(img_ori)
+# unsharp_mask(img_ori)
+# bilateral_filter(img_ori)
+
+# image gremotric transofmation
+# resize(img_ori)
+# translate(img_ori)
+# rotate(img_ori)
+affine(img_ori)
 cv.waitKey()
