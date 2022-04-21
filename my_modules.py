@@ -4,6 +4,7 @@ import numpy as np
 import math
 
 
+# this is a comment
 class MyFunctions:
     def open_file(self):
         filetypes = (

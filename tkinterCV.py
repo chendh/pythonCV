@@ -27,6 +27,7 @@ class App:
         self.operation_menu.add_command(label='Canny Edge Detector', command=self.my_function.canny_detector)
         self.operation_menu.add_command(label='Hough Transform', command=self.my_function.hough_transform)
 
+
         # Add submenu to mainmenu
         self.main_menu.add_cascade(label='檔案', menu=self.file_menu)
         self.main_menu.add_cascade(label='功能', menu=self.operation_menu)
