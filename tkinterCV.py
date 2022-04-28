@@ -26,7 +26,7 @@ class App:
         self.operation_menu = tk.Menu(self.main_menu, tearoff=0)
         self.operation_menu.add_command(label='Canny Edge Detector', command=self.my_function.canny_detector)
         self.operation_menu.add_command(label='Hough Transform', command=self.my_function.hough_transform)
-
+        self.operation_menu.add_command(label='Corner Harris', command=self.my_function.corner_Harris)
 
         # Add submenu to mainmenu
         self.main_menu.add_cascade(label='檔案', menu=self.file_menu)
