@@ -10,7 +10,7 @@ class App:
         self.window.title(window_title)
         self.window.geometry('1000x600')
 
-        self.my_function = my_modules.MyFunctions()
+        self.my_function = my_modules.MyFunction()
 
         # Add a menubar
         self.main_menu = tk.Menu(window)
@@ -18,7 +18,7 @@ class App:
         # Add file submenu
         self.file_menu = tk.Menu(self.main_menu, tearoff=0)
         self.file_menu.add_command(label='開啟檔案', command=self.my_function.open_file)
-        self.file_menu.add_command(label='儲存檔案', command=self.my_function.save_file)
+        # self.file_menu.add_command(label='儲存檔案', command=self.my_function.save_file)
         self.file_menu.add_separator()
         self.file_menu.add_command(label='離開程式', command=window.quit)
 
@@ -27,6 +27,11 @@ class App:
         self.operation_menu.add_command(label='Canny Edge Detector', command=self.my_function.canny_detector)
         self.operation_menu.add_command(label='Hough Transform', command=self.my_function.hough_transform)
         self.operation_menu.add_command(label='Corner Harris', command=self.my_function.corner_Harris)
+        self.operation_menu.add_separator()
+        self.operation_menu.add_command(label='Simple Contour', command=self.my_function.simple_contour)
+        self.operation_menu.add_command(label='Find Contour', command=self.my_function.find_contour)
+        self.operation_menu.add_command(label='Convex Hull', command=self.my_function.convex_hull)
+        self.operation_menu.add_command(label='Bounding Boxes', command=self.my_function.bounding_boxes)
 
         # Add submenu to mainmenu
         self.main_menu.add_cascade(label='檔案', menu=self.file_menu)
