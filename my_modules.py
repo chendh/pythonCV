@@ -2,6 +2,7 @@ import cv2 as cv
 from tkinter import filedialog
 import numpy as np
 import math
+import random
 
 
 # this is a comment
@@ -121,6 +122,119 @@ class MyFunctions:
         cv.imshow(source_window, src)
         cornerHarris_event_handler(thresh)
         cv.waitKey()
+
+    def simple_contour(self):
+        src = self.open_file()
+        src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+        cv.imshow('Source', src)
+
+        # cv.imshow('Graylevel image', src_gray)
+        ret, src_thresh = cv.threshold(src_gray, 127, 255, cv.THRESH_BINARY)
+        cv.imshow('Threshold image', src_thresh)
+
+        contours, hierarchy = cv.findContours(src_thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        contour_all = cv.drawContours(image=src, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=3)
+        cv.imshow('Contours', contour_all)
+        cv.waitKey()
+
+    def find_contour(self):
+        def contour_threshold_callback(val):
+            threshold = val
+            canny_output = cv.Canny(src_gray, threshold, threshold * 2)
+            contours, hierarchy = cv.findContours(canny_output, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+            # Draw contours
+            drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+            for i in range(len(contours)):
+                color = (random.randint(0, 256), random.randint(0, 256), random.randint(0, 256))
+                cv.drawContours(drawing, contours, i, color, 2, cv.LINE_8, hierarchy, 0)
+            cv.imshow('Contours', drawing)
+
+        src = self.open_file()
+        src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+        src_gray = cv.blur(src_gray, (3, 3))
+
+        # create a window and a trackbar
+        source_window = 'Source image'
+        cv.namedWindow(source_window)
+        cv.imshow(source_window, src)
+        max_thresh = 255
+        thresh = 100
+        cv.createTrackbar('Threshold: ', source_window, thresh, max_thresh, contour_threshold_callback)
+        contour_threshold_callback(thresh)
+        cv.waitKey()
+
+    def bounding_box(self):
+        def bounding_box_callback(val):
+            threshold = val
+            # canny_output = cv.Canny(src_gray, threshold, threshold * 2)
+            contours, hierarchy = cv.findContours(canny_output, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+            contours_poly = [None] * len(contours)
+            boundRect = [None] * len(contours)
+            centers = [None] * len(contours)
+            radius = [None] * len(contours)
+            for i, c in enumerate(contours):
+                contours_poly[i] = cv.approxPolyDP(c, 3, True)
+                boundRect[i] = cv.boundingRect(contours_poly[i])
+                centers[i], radius[i] = cv.minEnclosingCircle(contours_poly[i])
+
+            drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+
+            for i in range(len(contours)):
+                color = (random.randint(0, 256), random.randint(0, 256), random.randint(0, 256))
+                cv.drawContours(drawing, contours_poly, i, color)
+                cv.rectangle(drawing, (int(boundRect[i][0]), int(boundRect[i][1])),
+                             (int(boundRect[i][0] + boundRect[i][2]), int(boundRect[i][1] + boundRect[i][3])), color, 2)
+                # cv.circle(drawing, (int(centers[i][0]), int(centers[i][1])), int(radius[i]), color, 2)
+            cv.imshow('Contours', drawing)
+
+        src = self.open_file()
+        src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+        src_gray = cv.blur(src_gray, (3, 3))
+
+        # create a window and a trackbar
+        max_thresh = 255
+        thresh = 100
+        source_window = 'Source image'
+        cv.namedWindow(source_window)
+        canny_output = cv.Canny(src_gray, thresh, thresh * 2)
+        cv.imshow(source_window, src)
+        cv.createTrackbar('Threshold: ', source_window, thresh, max_thresh, bounding_box_callback)
+        bounding_box_callback(thresh)
+        cv.waitKey()
+
+    def convex_hull(self):
+        def convex_hull_callback(val):
+            threshold = val
+            canny_output = cv.Canny(src_gray, threshold, threshold * 2)
+            # Find contours
+            contours, _ = cv.findContours(canny_output, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+            # Find the convex hull object for each contour
+            hull_list = []
+            for i in range(len(contours)):
+                hull = cv.convexHull(contours[i])
+                hull_list.append(hull)
+            # Draw contours + hull results
+            drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+            for i in range(len(contours)):
+                color = (random.randint(0, 256), random.randint(0, 256), random.randint(0, 256))
+                cv.drawContours(drawing, contours, i, color)
+                cv.drawContours(drawing, hull_list, i, color)
+            cv.imshow('Contours', drawing)
+
+        src = self.open_file()
+        src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+        src_gray = cv.blur(src_gray, (3, 3))
+
+        # create a window and a trackbar
+        source_window = 'Source image'
+        cv.namedWindow(source_window)
+        cv.imshow(source_window, src)
+        max_thresh = 255
+        thresh = 100
+        cv.createTrackbar('Threshold: ', source_window, thresh, max_thresh, convex_hull_callback)
+        convex_hull_callback(thresh)
+        cv.waitKey()
+
 
 class MyVideoCapture:
     def __init__(self, video_source=0):

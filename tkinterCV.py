@@ -27,6 +27,11 @@ class App:
         self.operation_menu.add_command(label='Canny Edge Detector', command=self.my_function.canny_detector)
         self.operation_menu.add_command(label='Hough Transform', command=self.my_function.hough_transform)
         self.operation_menu.add_command(label='Corner Harris', command=self.my_function.corner_Harris)
+        self.operation_menu.add_separator()
+        self.operation_menu.add_command(label='Simple Contour', command=self.my_function.simple_contour)
+        self.operation_menu.add_command(label='Find Contour', command=self.my_function.find_contour)
+        self.operation_menu.add_command(label='Convex Hull', command=self.my_function.convex_hull)
+        self.operation_menu.add_command(label='Bounding Box', command=self.my_function.bounding_box)
 
         # Add submenu to mainmenu
         self.main_menu.add_cascade(label='檔案', menu=self.file_menu)
