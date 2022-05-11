@@ -32,6 +32,9 @@ class App:
         self.operation_menu.add_command(label='Find Contour', command=self.my_function.find_contour)
         self.operation_menu.add_command(label='Convex Hull', command=self.my_function.convex_hull)
         self.operation_menu.add_command(label='Bounding Boxes', command=self.my_function.bounding_boxes)
+        self.operation_menu.add_separator()
+        self.operation_menu.add_command(label='Basic Morphology', command=self.my_function.basic_morphology)
+        self.operation_menu.add_command(label='Custom Morphology', command=self.my_function.morphological_operations)
 
         # Add submenu to mainmenu
         self.main_menu.add_cascade(label='檔案', menu=self.file_menu)

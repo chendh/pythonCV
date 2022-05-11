@@ -202,7 +202,7 @@ class MyFunction:
             canny_output = cv.Canny(src_gray, threshold, threshold * 2)
             contours, _ = cv.findContours(canny_output, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
             contours_poly = [None] * len(contours)
-            boundRect = [None]* len(contours)
+            boundRect = [None] * len(contours)
             centers = [None] * len(contours)
             radius = [None] * len(contours)
 
@@ -234,6 +234,102 @@ class MyFunction:
         cv.createTrackbar('Canny thresh:', source_window, thresh, max_thresh, bounding_boxes_callback)
         bounding_boxes_callback(thresh)
         cv.waitKey()
+
+    def basic_morphology(self):
+        src = self.open_file()
+        src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+        # convert to binary image
+        ret, src_thresh = cv.threshold(src_gray, 127, 255, 0)
+        # show the thresholded image
+        cv.imshow("Thresholded Image", src_thresh)
+
+        # erosion
+        erosion_size = 3
+        erosion_element = cv.getStructuringElement(cv.MORPH_RECT, (2 * erosion_size + 1, 2 * erosion_size + 1),
+                                                   (erosion_size, erosion_size))
+        erosion_dst = cv.erode(src_thresh, erosion_element)
+        cv.imshow("Erosion", erosion_dst)
+
+        # dilation
+        dilation_size = 3
+        dilation_element = cv.getStructuringElement(cv.MORPH_RECT, (2 * dilation_size + 1, 2 * dilation_size + 1),
+                                                    (dilation_size, dilation_size))
+        dilation_dst = cv.dilate(src_thresh, dilation_element)
+        cv.imshow("Dilation", dilation_dst)
+
+        # opening
+        opening_size = 3
+        opening_element = cv.getStructuringElement(cv.MORPH_RECT, (2 * opening_size + 1, 2 * opening_size + 1),
+                                                   (opening_size, opening_size))
+        opening_dst = cv.morphologyEx(src_thresh, cv.MORPH_OPEN, opening_element)
+        cv.imshow("Opening", opening_dst)
+
+        cv.waitKey()
+
+    def morphological_operations(self):
+        # def add_gaussian_noise(img, mean=0, sigma=0.1):
+        #     img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        #     cv.imshow('Gray', img_gray)
+        #     img_gray = img_gray / 255
+        #     noise = np.random.normal(mean, sigma, img_gray.shape)
+        #     img_noise = img_gray + noise
+        #     img_noise = np.clip(img_noise, 0, 1)
+        #     img_noise = np.uint8(img_noise * 255)
+        #     noise = np.uint8(noise * 255)
+        #     cv.imshow('Gaussian', img_noise)
+        #     cv.imshow('noise', noise)
+        #     # convert the image to binary image
+        #     ret, img_thresh = cv.threshold(img_noise, 100, 255, cv.THRESH_BINARY)
+        #     # Show thresholded image
+        #     cv.imshow('Thresholded', img_thresh)
+        #     return img_thresh
+
+        # optional mapping of values with morphological shapes
+        def morph_shape(val):
+            if val == 0:
+                return cv.MORPH_RECT
+            elif val == 1:
+                return cv.MORPH_CROSS
+            elif val == 2:
+                return cv.MORPH_ELLIPSE
+
+        def erosion(val):
+            erosion_size = cv.getTrackbarPos(title_trackbar_kernel_size, title_erosion_window)
+            erosion_shape = morph_shape(cv.getTrackbarPos(title_trackbar_element_shape, title_erosion_window))
+
+            element = cv.getStructuringElement(erosion_shape, (2 * erosion_size + 1, 2 * erosion_size + 1),
+                                               (erosion_size, erosion_size))
+
+            erosion_dst = cv.erode(src, element)
+            cv.imshow(title_erosion_window, erosion_dst)
+
+        def dilatation(val):
+            dilatation_size = cv.getTrackbarPos(title_trackbar_kernel_size, title_dilation_window)
+            dilation_shape = morph_shape(cv.getTrackbarPos(title_trackbar_element_shape, title_dilation_window))
+            element = cv.getStructuringElement(dilation_shape, (2 * dilatation_size + 1, 2 * dilatation_size + 1),
+                                               (dilatation_size, dilatation_size))
+            dilatation_dst = cv.dilate(src, element)
+            cv.imshow(title_dilation_window, dilatation_dst)
+
+        erosion_size = 0
+        max_elem = 2
+        max_kernel_size = 21
+        title_trackbar_element_shape = 'Element:\n 0: Rect \n 1: Cross \n 2: Ellipse'
+        title_trackbar_kernel_size = 'Kernel size:\n 2n +1'
+        title_erosion_window = 'Erosion Demo'
+        title_dilation_window = 'Dilation Demo'
+
+        src = self.open_file()
+        cv.imshow('Source', src)
+        # img_thresh = add_gaussian_noise(src)
+        cv.namedWindow(title_erosion_window)
+        cv.createTrackbar(title_trackbar_element_shape, title_erosion_window, 0, max_elem, erosion)
+        cv.createTrackbar(title_trackbar_kernel_size, title_erosion_window, 0, max_kernel_size, erosion)
+        cv.namedWindow(title_dilation_window)
+        cv.createTrackbar(title_trackbar_element_shape, title_dilation_window, 0, max_elem, dilatation)
+        cv.createTrackbar(title_trackbar_kernel_size, title_dilation_window, 0, max_kernel_size, dilatation)
+        erosion(0)
+        dilatation(0)
 
 
 class MyVideoCapture:
